@@ -1,0 +1,124 @@
+<html>
+<head>
+<script src="/home/ali/python/flask/microblog/static/jquery.min.js"></script>
+<script src="/home/ali/python/flask/microblog/static/graph.js"></script></head>
+<body>
+<input type="number" name="text" id="st">
+<button id ="text" onclick="connect()">Connect</button>
+<input type="number" name="text" id="dt">
+<button id="col" onclick="col()">Color</button>
+
+<br>
+<canvas id="a" class="center-block" width="600" height="400" style="border:10px solid #ff00ff;"></canvas>
+<script>
+var figurs=[];
+var canvas = document.getElementById("a");
+var ctx = canvas.getContext('2d');
+var mouse = {x: 0, y: 0};
+function srt(x){
+	var a=x.sort()
+	for(var i=0;i<a.length;i++){
+		while(a[i]==a[i+1]){
+			a.splice(a.indexOf(a[i]),1);
+		}
+	}
+	
+	return a;
+}		
+function col(){	
+	var l=[];
+	var arr=[];
+	var lth=[];
+	var last=[];
+	var ls=[];
+	for(var lo=0;lo<figurs.length;lo++){
+		ls.push(0);	
+	}
+	for(var gh=0;gh<figurs.length;gh++){
+		last.push(ls)
+	}
+	for(var s=0;s<figurs.length;s++){
+		var f=srt(figurs[s]['n']);
+		lth.push(f.length);
+	} 
+	var color=["red","green","yellow","orange","blue","black"];		
+	for(var i=0;i<figurs.length;i++){
+		var q=srt(figurs[i]['n']);
+		var n=0%(color.length);
+		l.push({"p":[figurs[i]['x'],figurs[i]['y']],"c":color[n]});
+		arr.push(q);	
+	}
+	var count =0;
+	while(count<figurs.length+1){
+	var h=0
+	for(var z=0;z<arr.length;z++){
+		var n=h%(color.length);
+		for(var j=0;j<arr[z].length;j++){
+			var k=j+1;
+			var a=arr[z][j];
+			while(arr[a]['c']==color[n]){
+				n=k%(color.length); 			
+				k=k+1;
+			};
+		};
+		if(n!=h){
+			h=h+1;
+		};
+		arr[z]["c"]=color[n];
+		l[z]["c"]=color[n];
+		
+	}
+	count=count+1;
+	}
+	for(var p=0;p<l.length;p++){
+		ctx.fillStyle=l[p]['c'];
+		ctx.beginPath();        	
+		ctx.arc(l[p]['p'][0],l[p]['p'][1],5,0,2*Math.PI);
+		ctx.fill();
+	}	
+};
+
+canvas.addEventListener('mousemove', function(e) {
+  mouse.x = e.pageX - this.offsetLeft;
+  mouse.y = e.pageY - this.offsetTop;
+});
+
+canvas.addEventListener('mousedown', function(e) {
+    startx = e.pageX - this.offsetLeft;
+    starty = e.pageY - this.offsetTop;
+
+    ctx.beginPath();
+    canvas.addEventListener('mousedown',circ);
+
+});
+var circ=function(){
+	canvas.addEventListener('mouseout', function() {
+                canvas.removeEventListener('mousedown',circ);
+
+        });
+                ctx.arc(startx,starty,5,0,2*Math.PI);
+              	ctx.fill();
+		figurs.push({x:startx,y:starty,n:[]});	
+        	
+
+
+};
+function connect(){
+	var s=document.getElementById("st").value;
+	var d=document.getElementById("dt").value;
+	if(parseInt(d)<figurs.length){
+	figurs[s]['n'].push(parseInt(d));
+	};
+	if(parseInt(s)<figurs.length){
+	figurs[d]['n'].push(parseInt(s));
+	};
+	ctx.beginPath();
+	ctx.moveTo(figurs[s]['x'],figurs[s]['y']);
+  	ctx.lineTo(figurs[d]['x'],figurs[d]['y']);
+	ctx.stroke();
+} 
+
+</script>
+</body>
+
+</html>
